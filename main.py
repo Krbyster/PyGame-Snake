@@ -26,40 +26,14 @@ fps = pygame.time.Clock()
 
 snakePosition = [100,50]
 
-# here is the position of the snakes 4 body segments and fruits
+# here is the position of the snakes 4 body segments
 snakeBody = [[100,50], [90,50], [80,50], [70,50]]
 fruitPosition = [random.randrange(1,(windowX//10))*10, random.randrange(1,(windowY//10))*10]
-redFruitPosition = [random.randrange(1,(windowX//10))*10, random.randrange(1,(windowY//10))*10]
 fruitSpawn = True
-
 
 # snake starts pointing right
 direction = 'RIGHT'
 changeTo = direction
-
-fruitCounter = 0
-
-# Spawn a red fruit every third time a fruit is eaten
-def spawn_red_fruit():
-    global redFruitSpawned
-    if fruitCounter % 3 == 0:
-        redFruitSpawned = True
-        # Spawn the red fruit
-        redFruitPosition = [random.randrange(1, (windowX // 10)) * 10, random.randrange(1, (windowY // 10)) * 10]
-
-# Check for collision with the red fruit
-def check_red_fruit_collision():
-    global redFruitSpawned
-    if redFruitSpawned and snakePosition == redFruitPosition:
-        # End the game
-        gameOver()
-
-# Reset the counter and despawn the red fruit when the next fruit is eaten
-def reset_counter():
-    global fruitCounter
-    global redFruitSpawned
-    fruitCounter = 0
-    redFruitSpawned = False
 
 # score setup --------------------------------------------------------------------------------------------------------
 
@@ -113,8 +87,6 @@ def gameOver():
     quit()
 
 # run the game ---------------------------------------------------------------------------------------------------------
-
-
 while True:
     # key events
     for event in pygame.event.get():
@@ -152,15 +124,12 @@ while True:
     if snakePosition[0] == fruitPosition[0] and snakePosition[1] == fruitPosition[1]:
         score += 10
         fruitSpawn = False
-        fruitCounter += 1
-        reset_counter()
     else:
         snakeBody.pop()
     # spawn new fruit after it is eaten
     if not fruitSpawn:
         fruitPosition = [random.randrange(1,(windowX//10)) *10, random.randrange(1,(windowY//10)) *10]
     fruitSpawn = True
-    spawn_red_fruit()
     gameWindow.fill(black)
 
     for pos in snakeBody:
@@ -178,8 +147,6 @@ while True:
     for block in snakeBody[1:]:
         if snakePosition[0] == block[0] and snakePosition[1] == block[1]:
             gameOver()
-    # check if snake collided with red fruit
-    check_red_fruit_collision()
 
     # show score continuously
     showScore(1, white, 'times new roman', 20)
