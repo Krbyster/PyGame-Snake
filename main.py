@@ -15,6 +15,8 @@ red = pygame.Color(255, 0, 0)
 green = pygame.Color(0, 255, 0)
 blue = pygame.Color(0, 0, 255)
 
+fruitCount = 0
+
 # pygame setup --------------------------------------------------------------------------------------------------------
 
 pygame.init()
@@ -30,6 +32,7 @@ snakePosition = [100,50]
 snakeBody = [[100,50], [90,50], [80,50], [70,50]]
 fruitPosition = [random.randrange(1,(windowX//10))*10, random.randrange(1,(windowY//10))*10]
 fruitSpawn = True
+redFruitSpawn = False
 
 # snake starts pointing right
 direction = 'RIGHT'
@@ -129,19 +132,30 @@ while True:
     # spawn new fruit after it is eaten
     if not fruitSpawn:
         fruitPosition = [random.randrange(1,(windowX//10)) *10, random.randrange(1,(windowY//10)) *10]
-    fruitSpawn = True
+        fruitSpawn = True
+        fruitCount += 1
+        if fruitCount % 3 == 0:
+            redFruitPosition = [random.randrange(1, (windowX // 10)) * 10, random.randrange(1, (windowY // 10)) * 10]
+            redFruitSpawn = True
+        else:
+            redFruitSpawn = False
     gameWindow.fill(black)
 
     for pos in snakeBody:
         pygame.draw.rect(gameWindow, green, pygame.Rect(pos[0], pos[1], 10, 10))
 
     pygame.draw.rect(gameWindow, white, pygame.Rect(fruitPosition[0], fruitPosition[1], 10, 10))
+    if redFruitSpawn:
+        pygame.draw.rect(gameWindow, red, pygame.Rect(redFruitPosition[0], redFruitPosition[1], 10, 10))
 
     # check for game over
     # check if snake ran into wall
     if snakePosition[0] < 0 or snakePosition[0] > windowX -10:
         gameOver()
     if snakePosition[1] < 0 or snakePosition[1] > windowY -10:
+        gameOver()
+    # check if snake collided with red fruit
+    if redFruitSpawn and snakePosition[0] == redFruitPosition[0] and snakePosition[1] == redFruitPosition[1]:
         gameOver()
     # check if snake collided with self
     for block in snakeBody[1:]:
