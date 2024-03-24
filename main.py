@@ -16,6 +16,7 @@ green = pygame.Color(0, 255, 0)
 blue = pygame.Color(0, 0, 255)
 
 fruitCount = 0
+redFruitSpawned = 0
 
 # pygame setup --------------------------------------------------------------------------------------------------------
 
@@ -137,8 +138,13 @@ while True:
         if fruitCount % 3 == 0:
             redFruitPosition = [random.randrange(1, (windowX // 10)) * 10, random.randrange(1, (windowY // 10)) * 10]
             redFruitSpawn = True
+            redFruitSpawned += 1
         else:
-            redFruitSpawn = False
+            # check if red fruit should despawn
+            if redFruitSpawn and fruitCount - redFruitSpawned >= 3 * redFruitSpawned:
+                redFruitSpawn = False
+                fruitCount = 0
+
     gameWindow.fill(black)
 
     for pos in snakeBody:
@@ -161,6 +167,8 @@ while True:
     for block in snakeBody[1:]:
         if snakePosition[0] == block[0] and snakePosition[1] == block[1]:
             gameOver()
+
+
 
     # show score continuously
     showScore(1, white, 'times new roman', 20)
