@@ -17,6 +17,32 @@ blue = pygame.Color(0, 0, 255)
 
 fruitCount = 0
 redFruitSpawned = 0
+redFruits = []
+
+# red fruit class ---------------------------------------------------------------------------------------------
+
+class RedFruit:
+    def __init__(self, screen, x, y, lifespan):
+        self.screen = screen
+        self.position = [x,y]
+        self.rect = pygame.Rect(x, y, 10, 10)
+        self.color = red
+        self.lifespan = lifespan
+        #self.fruit_count = fruit_count
+
+    def draw(self):
+        pygame.draw.rect(self.screen, self.color, self.rect)
+
+    def age(self):
+        # Decrease lifespan by 1
+        self.lifespan -= 1
+
+        # Check if lifespan has expired
+        if self.lifespan <= 0:
+            self.rect = "Fruit has expired"
+
+    def is_collided_with_snake(self, snake_head):
+        return self.position == snake_head
 
 # pygame setup --------------------------------------------------------------------------------------------------------
 
@@ -33,7 +59,6 @@ snakePosition = [100,50]
 snakeBody = [[100,50], [90,50], [80,50], [70,50]]
 fruitPosition = [random.randrange(1,(windowX//10))*10, random.randrange(1,(windowY//10))*10]
 fruitSpawn = True
-redFruitSpawn = False
 
 # snake starts pointing right
 direction = 'RIGHT'
@@ -135,24 +160,29 @@ while True:
         fruitPosition = [random.randrange(1,(windowX//10)) *10, random.randrange(1,(windowY//10)) *10]
         fruitSpawn = True
         fruitCount += 1
-        if fruitCount % 3 == 0:
-            redFruitPosition = [random.randrange(1, (windowX // 10)) * 10, random.randrange(1, (windowY // 10)) * 10]
-            redFruitSpawn = True
-            redFruitSpawned += 1
-        else:
-            # check if red fruit should despawn
-            if redFruitSpawn and fruitCount - redFruitSpawned >= 3 * redFruitSpawned:
-                redFruitSpawn = False
-                fruitCount = 0
+        redFruits.append(RedFruit(gameWindow,
+                                random.randrange(1, (windowX // 10)) * 10,
+                                random.randrange(1, (windowY // 10)) * 10,
+                                redFruitSpawned+2))
+        redFruitSpawned += 1
+
+        # decrease fruit lifespans
+        for rf in redFruits:
+            rf.age()
+            # removed expired red fruits
+            if rf.lifespan <= 0:
+                redFruits.remove(rf)
 
     gameWindow.fill(black)
 
+    # draw the snake segments
     for pos in snakeBody:
         pygame.draw.rect(gameWindow, green, pygame.Rect(pos[0], pos[1], 10, 10))
-
+    # draw the fruits
     pygame.draw.rect(gameWindow, white, pygame.Rect(fruitPosition[0], fruitPosition[1], 10, 10))
-    if redFruitSpawn:
-        pygame.draw.rect(gameWindow, red, pygame.Rect(redFruitPosition[0], redFruitPosition[1], 10, 10))
+    for rf in redFruits:
+        rf.draw()
+        #pygame.draw.rect(gameWindow, red, rf.rect)
 
     # check for game over
     # check if snake ran into wall
@@ -161,8 +191,9 @@ while True:
     if snakePosition[1] < 0 or snakePosition[1] > windowY -10:
         gameOver()
     # check if snake collided with red fruit
-    if redFruitSpawn and snakePosition[0] == redFruitPosition[0] and snakePosition[1] == redFruitPosition[1]:
-        gameOver()
+    for rf in redFruits:
+        if rf.is_collided_with_snake(snakePosition):
+            gameOver()
     # check if snake collided with self
     for block in snakeBody[1:]:
         if snakePosition[0] == block[0] and snakePosition[1] == block[1]:
@@ -175,29 +206,9 @@ while True:
     # refresh rate
     fps.tick(snakeSpeed)
 
+
 '''
-class RedFruit:
-    def __init__(self, screen, x, y, lifespan, fruit_count):
-        self.screen = screen
-        self.rect = pygame.Rect(x, y, FRUIT_WIDTH, FRUIT_HEIGHT)
-        self.color = RED
-        self.lifespan = lifespan
-        self.fruit_count = fruit_count
 
-    def draw(self):
-        pygame.draw.rect(self.screen, self.color, self.rect)
-
-    def update(self):
-        # Decrease lifespan by 1
-        self.lifespan -= 1
-
-        # Check if lifespan has expired
-        if self.lifespan <= 0:
-            # Remove this fruit from the game
-            self.rect = None
-
-    def is_collided_with_snake(self, snake_head):
-        return self.rect.colliderect(snake_head.rect)
         
 # Create multiple RedFruits
 red_fruits = []
