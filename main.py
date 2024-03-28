@@ -168,11 +168,45 @@ while True:
         if snakePosition[0] == block[0] and snakePosition[1] == block[1]:
             gameOver()
 
-
-
     # show score continuously
     showScore(1, white, 'times new roman', 20)
     # refresh screen
     pygame.display.update()
     # refresh rate
     fps.tick(snakeSpeed)
+
+'''
+class RedFruit:
+    def __init__(self, screen, x, y, lifespan, fruit_count):
+        self.screen = screen
+        self.rect = pygame.Rect(x, y, FRUIT_WIDTH, FRUIT_HEIGHT)
+        self.color = RED
+        self.lifespan = lifespan
+        self.fruit_count = fruit_count
+
+    def draw(self):
+        pygame.draw.rect(self.screen, self.color, self.rect)
+
+    def update(self):
+        # Decrease lifespan by 1
+        self.lifespan -= 1
+
+        # Check if lifespan has expired
+        if self.lifespan <= 0:
+            # Remove this fruit from the game
+            self.rect = None
+
+    def is_collided_with_snake(self, snake_head):
+        return self.rect.colliderect(snake_head.rect)
+        
+# Create multiple RedFruits
+red_fruits = []
+for i in range(NUMBER_OF_RED_FRUITS):
+    x = random.randint(0, SCREEN_WIDTH - FRUIT_WIDTH)
+    y = random.randint(0, SCREEN_HEIGHT - FRUIT_HEIGHT)
+    lifespan = random.randint(FRUIT_LIFESPAN_MIN, FRUIT_LIFESPAN_MAX)
+    fruit_count = len(red_fruits)
+
+    red_fruit = RedFruit(screen, x, y, lifespan, fruit_count)
+    red_fruits.append(red_fruit)
+'''
