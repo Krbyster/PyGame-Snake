@@ -28,7 +28,6 @@ class RedFruit:
         self.rect = pygame.Rect(x, y, 10, 10)
         self.color = red
         self.lifespan = lifespan
-        #self.fruit_count = fruit_count
 
     def draw(self):
         pygame.draw.rect(self.screen, self.color, self.rect)
@@ -157,13 +156,20 @@ while True:
         snakeBody.pop()
     # spawn new fruit after it is eaten
     if not fruitSpawn:
+        # take note of tiles that have red fruits on them
+        occupiedPositions = []
+        for rf in redFruits:
+            occupiedPositions.append(rf.position)
         fruitPosition = [random.randrange(1,(windowX//10)) *10, random.randrange(1,(windowY//10)) *10]
+        # dont allow a fruit to spawn on a tile with a red fruit
+        while fruitPosition in occupiedPositions:
+            fruitPosition = [random.randrange(1, (windowX // 10)) * 10, random.randrange(1, (windowY // 10)) * 10]
         fruitSpawn = True
         fruitCount += 1
-        redFruits.append(RedFruit(gameWindow,
-                                random.randrange(1, (windowX // 10)) * 10,
-                                random.randrange(1, (windowY // 10)) * 10,
-                                redFruitSpawned+2))
+        redFruits.append(RedFruit(gameWindow,                               # screen
+                                random.randrange(1, (windowX // 10)) * 10,  # x
+                                random.randrange(1, (windowY // 10)) * 10,  # y
+                                redFruitSpawned+2))                         # lifespan
         redFruitSpawned += 1
 
         # decrease fruit lifespans
@@ -182,7 +188,6 @@ while True:
     pygame.draw.rect(gameWindow, white, pygame.Rect(fruitPosition[0], fruitPosition[1], 10, 10))
     for rf in redFruits:
         rf.draw()
-        #pygame.draw.rect(gameWindow, red, rf.rect)
 
     # check for game over
     # check if snake ran into wall
@@ -204,20 +209,6 @@ while True:
     # refresh screen
     pygame.display.update()
     # refresh rate
-    fps.tick(snakeSpeed)
+    extraSpeed = fruitCount//2
+    fps.tick(snakeSpeed + extraSpeed)
 
-
-'''
-
-        
-# Create multiple RedFruits
-red_fruits = []
-for i in range(NUMBER_OF_RED_FRUITS):
-    x = random.randint(0, SCREEN_WIDTH - FRUIT_WIDTH)
-    y = random.randint(0, SCREEN_HEIGHT - FRUIT_HEIGHT)
-    lifespan = random.randint(FRUIT_LIFESPAN_MIN, FRUIT_LIFESPAN_MAX)
-    fruit_count = len(red_fruits)
-
-    red_fruit = RedFruit(screen, x, y, lifespan, fruit_count)
-    red_fruits.append(red_fruit)
-'''
