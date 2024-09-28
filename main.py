@@ -1,6 +1,9 @@
 import pygame
 import time
 import random
+import pyjsdl as pygame
+import pyjs
+pygame.display.setup(run, images)
 
 # initializing --------------------------------------------------------------------------------------------------------
 
